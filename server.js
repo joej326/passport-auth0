@@ -3,23 +3,24 @@ const session = require('express-session');
 const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const bodyParser = require('body-parser');
+const config = require('./.config.js');
 
 
 const app = express();///////
 app.use(bodyParser.json());/////
 
 app.use(session({////
-  secret: '32rujfu3ufwu893q'/////
+  secret: config.secret/////
 }))/////
 app.use(passport.initialize());/////MUST BE IN THIS ORDER OR IT WON'T WORK
 app.use(passport.session());//////
 
 
 passport.use(new Auth0Strategy({
-  domain: 'joej326.auth0.com',
-  clientID: '8Wyn0JnNALgWyn9MD75SmwEYGaDlgzAh',
-  clientSecret: 'JdT06kCfZxQfHlbDx813THsbu7vJRQZ0DLOOprvlFBMwd5mCp-xmgh2wK_yUR-WR',
-  callbackURL: '/auth/callback'
+  domain: config.auth0.domain,
+  clientID: config.auth0.clientID,
+  clientSecret: config.auth0.clientSecret,
+  callbackURL: config.auth0.callbackURL
 }, function(accessToken, refreshToken, extraParams, profile, done) {
   return done(null, profile);
 }));
@@ -37,7 +38,7 @@ passport.serializeUser(function(user,done){ //'done' works like 'next'
 });
 
 passport.deserializeUser(function(user, done){ //decodes to put on req.user
-  done(null, user);
+  return done(null, user); // return wasnt here before
 });
 
 
